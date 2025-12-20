@@ -49,19 +49,11 @@ export default function Pricing() {
     <div className="grid md:grid-cols-2 gap-6">
       <div className="border-2 border-gray-200 rounded-lg p-8 bg-white hover:border-blue-300 transition">
         <h3 className="text-2xl font-bold text-gray-900">Starter</h3>
-        <p className="mt-3 text-4xl font-extrabold text-gray-900">HKD 78<span className="text-lg text-gray-600 font-normal">/mo</span></p>
+        <p className="mt-3 text-4xl font-extrabold text-gray-900">HKD 10<span className="text-lg text-gray-600 font-normal">/mo</span></p>
         <ul className="mt-4 space-y-3 text-gray-700">
           <li className="flex items-start">
             <span className="text-blue-600 font-bold mr-2">✓</span>
-            <span>Up to 50 minutes summarized/mo</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-blue-600 font-bold mr-2">✓</span>
-            <span>5 documents per month</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-blue-600 font-bold mr-2">✓</span>
-            <span>Email support</span>
+            <span>Unlimited summaries</span>
           </li>
         </ul>
         <button
@@ -78,19 +70,11 @@ export default function Pricing() {
           Most Popular
         </div>
         <h3 className="text-2xl font-bold text-gray-900">Pro</h3>
-        <p className="mt-3 text-4xl font-extrabold text-gray-900">HKD 288<span className="text-lg text-gray-600 font-normal">/mo</span></p>
+        <p className="mt-3 text-4xl font-extrabold text-gray-900">HKD 100<span className="text-lg text-gray-600 font-normal">/mo</span></p>
         <ul className="mt-4 space-y-3 text-gray-700">
           <li className="flex items-start">
             <span className="text-blue-600 font-bold mr-2">✓</span>
             <span>Unlimited summaries</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-blue-600 font-bold mr-2">✓</span>
-            <span>Priority support</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-blue-600 font-bold mr-2">✓</span>
-            <span>Team seats (coming soon)</span>
           </li>
         </ul>
         <button

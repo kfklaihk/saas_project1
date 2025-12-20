@@ -4,12 +4,10 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import InputForm from '@/components/InputForm';
-import ResultCard from '@/components/ResultCard';
 
 export default function Dashboard() {
   const [session, setSession] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
-  const [docs, setDocs] = useState<any[]>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -22,8 +20,6 @@ export default function Dashboard() {
       if (!session) return;
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
       setProfile(prof);
-      const { data: docs } = await supabase.from('documents').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
-      setDocs(docs ?? []);
     })();
   }, [session]);
 
@@ -60,10 +56,6 @@ export default function Dashboard() {
       </div>
 
       <InputForm />
-
-      <section className="mt-8 grid gap-4">
-        {docs.map(d => <ResultCard key={d.id} doc={d} />)}
-      </section>
     </main>
   );
 }

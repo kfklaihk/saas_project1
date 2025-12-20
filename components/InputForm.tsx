@@ -2,41 +2,8 @@
 'use client';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-
-function JsonTable({ data }: { data: any }) {
-  const renderValue = (value: any): string => {
-    if (typeof value === 'object' && value !== null) {
-      return JSON.stringify(value, null, 2);
-    }
-    return String(value);
-  };
-
-  const entries = Object.entries(data).map(([key, value]) => ({
-    key,
-    value: renderValue(value)
-  }));
-
-  return (
-    <div className="overflow-x-auto mt-4">
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-        <tr className="bg-blue-50">
-            <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Key</th>
-            <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {entries.map((entry, idx) => (
-            <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-              <td className="border border-gray-300 px-4 py-2 font-medium text-gray-700">{entry.key}</td>
-              <td className="border border-gray-300 px-4 py-2 text-gray-600 whitespace-pre-wrap font-mono text-sm">{entry.value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+import { config } from '@/lib/config';
+import ResultCard from './ResultCard';
 
 export default function InputForm({ disabled }: { disabled?: boolean }) {
   const [originalText, setOriginalText] = useState('');
@@ -45,12 +12,12 @@ export default function InputForm({ disabled }: { disabled?: boolean }) {
 
   // Calculate UTF-8 byte length
   const charCount = new TextEncoder().encode(originalText).length;
-  const maxChars = 5000;
+  const maxChars = config.MAX_TEXT_LENGTH;
   const isExceeded = charCount > maxChars;
 
   const generate = async () => {
     if (isExceeded) {
-      alert('Text exceeds 5000 UTF-8 character limit');
+      alert(`Text exceeds ${config.MAX_TEXT_LENGTH} UTF-8 character limit`);
       return;
     }
 
@@ -110,7 +77,7 @@ export default function InputForm({ disabled }: { disabled?: boolean }) {
       </div>
 
       <h3 className="font-semibold mb-2 mt-6">Generated Summary</h3>
-      {generatedOutput && <JsonTable data={generatedOutput} />}
+      {generatedOutput && <ResultCard doc={{ output: generatedOutput }} />}
     </div>
   );
 }

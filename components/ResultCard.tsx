@@ -8,28 +8,55 @@ function JsonTable({ data }: { data: any }) {
     return String(value);
   };
 
-  const entries: { key: string; value: any; isArray?: boolean }[] = [];
+  const entries: { key: string; value: any; isArray?: boolean; isNested?: boolean; nestedLevel?: number }[] = [];
 
-  Object.entries(data).forEach(([key, value]) => {
-    // Skip summary key
-    if (key === 'summary') return;
-
+  const processValue = (key: string, value: any, level: number = 0) => {
     if (Array.isArray(value)) {
       // For arrays, add each item as a separate row
       value.forEach((item, idx) => {
-        entries.push({
-          key: idx === 0 ? key : '',
-          value: renderValue(item),
-          isArray: true
-        });
+        if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
+          // If array contains objects, process each key-value pair
+          Object.entries(item).forEach(([itemKey, itemValue], itemIdx) => {
+            entries.push({
+              key: idx === 0 && itemIdx === 0 ? key : '',
+              value: renderValue(itemValue),
+              isArray: true,
+              isNested: level > 0,
+              nestedLevel: level
+            });
+          });
+        } else {
+          entries.push({
+            key: idx === 0 ? key : '',
+            value: renderValue(item),
+            isArray: true,
+            isNested: level > 0,
+            nestedLevel: level
+          });
+        }
+      });
+    } else if (typeof value === 'object' && value !== null) {
+      // For nested objects, process each key-value pair
+      Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+        processValue(`${key} > ${nestedKey}`, nestedValue, level + 1);
       });
     } else {
       entries.push({
         key,
-        value: renderValue(value)
+        value: renderValue(value),
+        isNested: level > 0,
+        nestedLevel: level
       });
     }
-  });
+  };
+
+  // Process only the summary key from data
+  const summaryValue = data.summary;
+  if (typeof summaryValue === 'object' && summaryValue !== null) {
+    Object.entries(summaryValue).forEach(([summaryKey, value]) => {
+      processValue(summaryKey, value, 0);
+    });
+  }
 
   return (
     <div className="overflow-x-auto mt-4">
@@ -37,7 +64,11 @@ function JsonTable({ data }: { data: any }) {
         <tbody>
           {entries.map((entry, idx) => (
             <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-              <td className="border border-gray-300 px-3 py-2 font-medium text-gray-700 whitespace-nowrap align-top">{entry.key}</td>
+              <td className="border border-gray-300 px-3 py-2 font-medium text-gray-700 align-top">
+                <div style={{ marginLeft: `${(entry.nestedLevel || 0) * 20}px` }}>
+                  {entry.key}
+                </div>
+              </td>
               <td className="border border-gray-300 px-3 py-2 text-gray-600 whitespace-pre-wrap font-mono text-xs">{entry.value}</td>
             </tr>
           ))}
@@ -48,13 +79,13 @@ function JsonTable({ data }: { data: any }) {
 }
 
 export default function ResultCard({ doc }: { doc: any }) {
-  const o = doc.output || {};
+  const output = doc.output || {};
   
   return (
     <div className="border rounded p-4 bg-white">
   {/*    <h4 className="font-semibold text-lg mb-4">{doc.title}</h4> */}
-      {typeof o === 'object' && Object.keys(o).length > 0 ? (
-        <JsonTable data={o} />
+      {typeof output === 'object' && Object.keys(output).length > 0 ? (
+        <JsonTable data={output} />
       ) : (
         <p className="text-gray-500">No output available</p>
       )}

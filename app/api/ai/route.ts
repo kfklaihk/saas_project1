@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseClient';
+import { config } from '@/lib/config';
 
 export async function POST(req: Request) {
   const { userId, title, transcript } = await req.json();
@@ -10,9 +11,9 @@ export async function POST(req: Request) {
   }
 
   const textLength = new TextEncoder().encode(transcript).length;
-  if (textLength > 5000) {
+  if (textLength > config.MAX_TEXT_LENGTH) {
     return NextResponse.json(
-      { error: 'Text exceeds 5000 UTF-8 character limit. Please reduce your input.' },
+      { error: `Text exceeds ${config.MAX_TEXT_LENGTH} UTF-8 character limit. Please reduce your input.` },
       { status: 413 }
     );
   }
@@ -49,9 +50,9 @@ export async function POST(req: Request) {
 
     const currentCount = usage?.call_count ?? 0;
 
-    if (currentCount >= 5) {
+    if (currentCount >= config.FREE_TIER_DAILY_LIMIT) {
       return NextResponse.json(
-        { error: 'Free tier quota exceeded. You have 5 calls per 24 hours. Quota resets at 00:00 GMT+8 daily.' },
+        { error: `Free tier quota exceeded. You have ${config.FREE_TIER_DAILY_LIMIT} calls per 24 hours. Quota resets at 00:00 GMT+8 daily.` },
         { status: 429 }
       );
     }
