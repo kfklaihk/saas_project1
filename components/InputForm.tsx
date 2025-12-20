@@ -50,7 +50,7 @@ export default function InputForm({ disabled }: { disabled?: boolean }) {
         onChange={e => setOriginalText(e.target.value)} 
       />
       <div className={`text-sm mt-2 ${isExceeded ? 'text-red-600 font-semibold' : 'text-gray-600'}`}>
-        {charCount} / {maxChars} UTF-8 bytes
+        {charCount} / {maxChars} characters
       </div>
       
       <div className="flex gap-3 mt-4">
