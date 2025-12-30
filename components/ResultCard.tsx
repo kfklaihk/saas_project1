@@ -51,7 +51,7 @@ function JsonTable({ data }: { data: any }) {
   };
 
   // Process only the summary key from data
-  const summaryValue = data.summary;
+  const summaryValue = data.summary || data;
   if (typeof summaryValue === 'object' && summaryValue !== null) {
     Object.entries(summaryValue).forEach(([summaryKey, value]) => {
       processValue(summaryKey, value, 0);
